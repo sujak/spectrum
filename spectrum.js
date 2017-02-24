@@ -41,6 +41,7 @@
         togglePaletteOnly: false,
         showSelectionPalette: true,
         localStorageKey: false,
+        localStoragePaletteDuplicate: false,
         appendTo: "body",
         maxSelectionSize: 7,
         cancelText: "cancel",
@@ -181,6 +182,7 @@
             flat = opts.flat,
             showSelectionPalette = opts.showSelectionPalette,
             localStorageKey = opts.localStorageKey,
+            localStoragePaletteDuplicate = opts.localStoragePaletteDuplicate,
             theme = opts.theme,
             callbacks = opts.callbacks,
             resize = throttle(reflow, 10),
@@ -284,6 +286,7 @@
             if(selectionPalette){
                 selectionPalette = [tinycolor(selectionPalette).toRgbString()];
             }
+
             if (shouldReplace) {
                 boundElement.after(replacer).hide();
             }
@@ -510,10 +513,12 @@
         function addColorToSelectionPalette(color) {
             if (showSelectionPalette) {
                 var rgb = tinycolor(color).toRgbString();
-                if (!paletteLookup[rgb] && $.inArray(rgb, selectionPalette) === -1) {
-                    selectionPalette.push(rgb);
-                    while(selectionPalette.length > maxSelectionSize) {
-                        selectionPalette.shift();
+                if ($.inArray(rgb, selectionPalette) === -1) {
+                    if(localStoragePaletteDuplicate || !paletteLookup[rgb]){
+                        selectionPalette.push(rgb);
+                        while(selectionPalette.length > maxSelectionSize) {
+                            selectionPalette.shift();
+                        }
                     }
                 }
 
@@ -532,7 +537,7 @@
                 for (var i = 0; i < selectionPalette.length; i++) {
                     var rgb = tinycolor(selectionPalette[i]).toRgbString();
 
-                    if (!paletteLookup[rgb]) {
+                    if (localStoragePaletteDuplicate || !paletteLookup[rgb]) {
                         unique.push(selectionPalette[i]);
                     }
                 }
