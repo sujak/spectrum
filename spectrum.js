@@ -281,6 +281,9 @@
 
             applyOptions();
 
+            if(selectionPalette){
+                selectionPalette = [tinycolor(selectionPalette).toRgbString()];
+            }
             if (shouldReplace) {
                 boundElement.after(replacer).hide();
             }
